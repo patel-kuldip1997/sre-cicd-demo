@@ -1,0 +1,26 @@
+name: Deploy to AWS EC2
+
+# જ્યારે પણ 'main' બ્રાન્ચમાં નવો કોડ આવે ત્યારે આ રોબોટ ચાલુ થશે
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # રોબોટ પોતાનું એક નાનું કમ્પ્યુટર લેશે
+
+    steps:
+    # 1. ગિટહબમાંથી કોડ ઉઠાવશે
+    - name: Get Code
+      uses: actions/checkout@v3
+
+    # 2. નવો કોડ AWS સર્વર પર મોકલશે
+    - name: Copy files to AWS
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.AWS_IP }}
+        username: ec2-user
+        key: ${{ secrets.AWS_KEY }}
+        source: "index.html"
+        target: "/home/ec2-user/"
